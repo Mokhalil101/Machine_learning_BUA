@@ -1,0 +1,243 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Import required libraries\n",
+        "\n",
+        "\n",
+        "*   pandas: for data manipulation\n",
+        "*   matplotlib: for plotting\n",
+        "*   sklearn: for splitting data, scaling, model training, and evaluation\n",
+        "\n",
+        "\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "tQVNIgXYfEUx"
+      }
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "5eVh78bxe7w7"
+      },
+      "outputs": [],
+      "source": [
+        "import pandas as pd\n",
+        "import matplotlib.pyplot as plt\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn.preprocessing import StandardScaler\n",
+        "from sklearn.linear_model import LinearRegression, Ridge, Lasso\n",
+        "from sklearn.metrics import mean_squared_error\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Load the CSV file into a DataFrame\n",
+        "& Prepare input (x - features) and output (y - target)\n"
+      ],
+      "metadata": {
+        "id": "sItL9Ei_f5yI"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df = pd.read_csv(\"employee_salary_data.csv\")\n",
+        "\n",
+        "x = df[['YearsExperience', 'Age', 'WorkingHoursPerWeek']]\n",
+        "y = df['Salary']"
+      ],
+      "metadata": {
+        "id": "4sy8zaVAf4i6"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Split data into training and testing\n",
+        "\n",
+        "---\n",
+        "Standardize features\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "Gc8cLjQmglXS"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=40)\n",
+        "\n",
+        "scaler = StandardScaler()\n",
+        "x_train_scaled = scaler.fit_transform(x_train)\n",
+        "x_test_scaled = scaler.transform(x_test)\n"
+      ],
+      "metadata": {
+        "id": "Jr-uAPhhgncY"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Linear Regression\n",
+        "\n",
+        "\n"
+      ],
+      "metadata": {
+        "id": "1HVkBeoQmhyI"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "lr = LinearRegression()\n",
+        "lr.fit(x_train_scaled, y_train)\n",
+        "\n",
+        "mse_train_lr = mean_squared_error(y_train, lr.predict(x_train_scaled))\n",
+        "mse_test_lr = mean_squared_error(y_test, lr.predict(x_test_scaled))\n",
+        "\n",
+        "print(\"Train MSE:\", round(mse_train_lr, 2))\n",
+        "print(\"Test MSE:\", round(mse_test_lr, 2))"
+      ],
+      "metadata": {
+        "id": "jiYd-VADmYmx"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Ridge Regression"
+      ],
+      "metadata": {
+        "id": "WhWqzLagg5PZ"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "ridge = Ridge(alpha=1.0)  #[0.01, 0.1, 1, 10]\n",
+        "\n",
+        "ridge.fit(x_train_scaled, y_train)\n",
+        "\n",
+        "mse_train_ridge = mean_squared_error(y_train, ridge.predict(x_train_scaled))\n",
+        "mse_test_ridge = mean_squared_error(y_test, ridge.predict(x_test_scaled))\n",
+        "\n",
+        "print(\"Train MSE:\", round(mse_train_ridge, 2))\n",
+        "print(\"Test MSE:\", round(mse_test_ridge, 2))"
+      ],
+      "metadata": {
+        "id": "UAhRp2pDm-2a"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Lasso Regression"
+      ],
+      "metadata": {
+        "id": "__1rju7OnJtQ"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "lasso = Lasso(alpha=0.01)  #[0.01, 0.1, 1, 10]\n",
+        "lasso.fit(x_train_scaled, y_train)\n",
+        "\n",
+        "mse_train_lasso = mean_squared_error(y_train, lasso.predict(x_train_scaled))\n",
+        "mse_test_lasso = mean_squared_error(y_test, lasso.predict(x_test_scaled))\n",
+        "\n",
+        "print(\"Train MSE:\", round(mse_train_lasso, 2))\n",
+        "print(\"Test MSE:\", round(mse_test_lasso, 2))\n"
+      ],
+      "metadata": {
+        "id": "w_76k6WXnMCZ"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "Visualization MSE Comparison"
+      ],
+      "metadata": {
+        "id": "cN4E52MBnWsJ"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "models = ['Linear', 'Ridge', 'Lasso']\n",
+        "train_mse = [mse_train_lr, mse_train_ridge, mse_train_lasso]\n",
+        "test_mse = [mse_test_lr, mse_test_ridge, mse_test_lasso]\n",
+        "\n",
+        "x = range(len(models))\n",
+        "plt.bar([i - 0.2 for i in x], train_mse, 0.4, label='Train MSE')\n",
+        "plt.bar([i + 0.2 for i in x], test_mse, 0.4, label='Test MSE')\n",
+        "\n",
+        "plt.xlabel('Model')\n",
+        "plt.ylabel('MSE Value')\n",
+        "plt.title('MSE Comparison of Linear, Ridge, and Lasso Regression')\n",
+        "plt.xticks(x, models)\n",
+        "plt.legend()\n",
+        "plt.show()"
+      ],
+      "metadata": {
+        "id": "zhTsLZM8nbaa"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**conclusion**\n",
+        "\n",
+        "The results show that all three models — Linear Regression, Ridge Regression, and Lasso Regression — can predict salary based on experience, age, and working hours.\n",
+        "Among them, Ridge and Lasso Regression generally provide lower Mean Squared Error (MSE) values compared to the basic Linear Regression, which means they handle overfitting better\n",
+        "\n",
+        "---\n",
+        "\n",
+        "**To improve the model**\n",
+        "\n",
+        "\n",
+        "Tune the alpha parameter using cross-validation to find the best regularization strength.\n",
+        "\n",
+        "Remove or handle outliers in the dataset.\n",
+        "\n",
+        "Ensure data standardization is applied correctly before model training\n"
+      ],
+      "metadata": {
+        "id": "FTviD4bBp1zp"
+      }
+    }
+  ]
+}
